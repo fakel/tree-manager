@@ -21,5 +21,6 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-Vue.prototype.$auth = firebase.auth();
-Vue.prototype.$db = firebase.firestore();
+Vue.prototype.$firebase = firebase;
+Vue.prototype.$auth = firebase.auth;
+Vue.prototype.$db = firebase.firestore;
