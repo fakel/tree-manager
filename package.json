@@ -6,6 +6,8 @@
   "author": "Fares A. Akel C.",
   "private": true,
   "scripts": {
+    "android": "quasar dev -m cordova -T android",
+    "serve": "quasar dev",
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0"
   },
