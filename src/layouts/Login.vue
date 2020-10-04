@@ -31,9 +31,24 @@
                 <p>Alternatively you can log in using:</p>
             </div>
             <div class="row q-gutter-sm">
-                <q-btn round color="primary" icon="ion-logo-facebook" />
-                <q-btn round color="cyan" icon="ion-logo-twitter" />
-                <q-btn round color="red" icon="ion-logo-google" />
+                <q-btn
+                    @click="signWithFacebook"
+                    round
+                    color="primary"
+                    icon="ion-logo-facebook"
+                    />
+                <q-btn
+                    @click="signWithTwitter"
+                    round
+                    color="cyan"
+                    icon="ion-logo-twitter"
+                />
+                <q-btn
+                    @click="signWithGoogle"
+                    round
+                    color="red"
+                    icon="ion-logo-google"
+                />
             </div>
         </q-page>
     </q-page-container>
@@ -46,6 +61,36 @@ export default {
   data() {
     return {
     };
+  },
+  methods: {
+    signWithFacebook() {
+      console.log('Facebook');
+    },
+    signWithTwitter() {
+      console.log('Twitter');
+    },
+    signWithGoogle() {
+      console.log('Google');
+      const provider = new this.$firebase.auth.GoogleAuthProvider();
+      this.$auth().signInWithPopup(provider).then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const token = result.credential.accessToken;
+        // The signed-in user info.
+        const { user } = result;
+
+        console.log(token, user);
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        // The email of the user's account used.
+        // const { email } = error;
+        // The firebase.auth.AuthCredential type that was used.
+        // const { credential } = error;
+        // ...
+      });
+    },
   },
 };
 </script>
