@@ -62,6 +62,7 @@ export default {
     return {
     };
   },
+  // eslint-disable-next-line no-unused-vars
   methods: {
     signWithFacebook() {
       console.log('Facebook');
@@ -72,13 +73,13 @@ export default {
     signWithGoogle() {
       console.log('Google');
       const provider = new this.$firebase.auth.GoogleAuthProvider();
-      this.$auth().signInWithPopup(provider).then((result) => {
+      this.$auth().signInWithPopup(provider).then(() => {
         // This gives you a Google Access Token. You can use it to access the Google API.
-        const token = result.credential.accessToken;
+        // const token = result.credential.accessToken;
         // The signed-in user info.
-        const { user } = result;
-
-        console.log(token, user);
+        // const { user } = result;
+        // this.$idb.saveUser(user);
+        // this.$store.dispatch('base/storeUser', user);
       }).catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
