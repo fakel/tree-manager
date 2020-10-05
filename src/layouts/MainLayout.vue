@@ -15,7 +15,12 @@
           Quasar App
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn
+            @click="logout"
+            round
+            color="red"
+            icon="ion-power"
+        />
       </q-toolbar>
     </q-header>
 
@@ -102,6 +107,11 @@ export default {
       leftDrawerOpen: false,
       essentialLinks: linksData,
     };
+  },
+  methods: {
+    logout() {
+      this.$auth().signOut();
+    },
   },
 };
 </script>
