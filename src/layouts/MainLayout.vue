@@ -1,46 +1,49 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated class="bg-primary text-white">
       <q-toolbar>
         <q-btn
           flat
           dense
           round
-          icon="menu"
-          aria-label="Menu"
+          :icon="treeID ? 'menu' : 'eco'"
+          :aria-label="treeID ? 'Menu' : 'Eco'"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
-
         <q-toolbar-title>
-          Quasar App
+          Forest Manager
         </q-toolbar-title>
-
         <q-btn
-            @click="logout"
-            round
-            color="red"
-            icon="ion-power"
-        />
+              @click="logout"
+              round
+              color="red"
+              icon="ion-power"
+          />
       </q-toolbar>
     </q-header>
 
     <q-drawer
+      v-if="treeID"
       v-model="leftDrawerOpen"
       show-if-above
       bordered
       content-class="bg-grey-1"
+      :width="150"
     >
-      <q-list>
+      <q-list class="column no-wrap items-center justify-center q-pa-md q-gutter-sm">
         <q-item-label
           header
           class="text-grey-8"
         >
-          Essential Links
+          Menu
         </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
+        <q-btn
+          color="secondary"
+          style="width: 100px"
+          v-for="link in menuLinks"
           :key="link.title"
-          v-bind="link"
+          :label="link.title"
+          @click="$router.push(link.link)"
         />
       </q-list>
     </q-drawer>
@@ -52,66 +55,71 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue';
+import { createNamespacedHelpers } from 'vuex';
 
+const { mapState, mapActions } = createNamespacedHelpers('base');
 const linksData = [
   {
-    title: 'Docs',
+    title: 'Harvest',
     caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
+    link: { name: 'harvest' },
   },
   {
-    title: 'Github',
+    title: 'Fruit',
     caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
+    link: { name: 'fruit' },
   },
   {
-    title: 'Discord Chat Channel',
+    title: 'Flower',
     caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
+    link: { name: 'flower' },
   },
   {
-    title: 'Forum',
+    title: 'Prunning',
     caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
+    link: { name: 'prunning' },
   },
   {
-    title: 'Twitter',
+    title: 'Healt',
     caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
+    link: { name: 'healt' },
   },
   {
-    title: 'Facebook',
+    title: 'About',
     caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
+    link: { name: 'about' },
   },
   {
-    title: 'Quasar Awesome',
+    title: 'Send Data',
     caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
+    link: { name: 'send' },
   },
 ];
 
 export default {
   name: 'MainLayout',
-  components: { EssentialLink },
+  components: {},
   data() {
     return {
       leftDrawerOpen: false,
-      essentialLinks: linksData,
+      menuLinks: linksData,
     };
+  },
+  computed: {
+    ...mapState({
+      treeID: (state) => state.treeID,
+    }),
   },
   methods: {
     logout() {
-      this.$auth().signOut();
+      if (this.$store.state.userState === 'offline') {
+        this.saveUserState({ userState: null });
+      } else {
+        this.$auth().signOut();
+        this.$router.push({ path: '/' });
+      }
     },
+    ...mapActions(['saveUserState']),
   },
 };
 </script>
