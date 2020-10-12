@@ -31,7 +31,7 @@
               dense
               v-model="treeID"
               autofocus
-              @keyup.enter="prompt = false"
+              @keyup.enter="setTree"
             />
           </q-card-section>
 
@@ -65,6 +65,7 @@ export default {
         this.saveTreeID({ treeID: this.treeID });
         this.$router.push({ name: 'treeoffline' });
       }
+      this.prompt = false;
     },
     ...mapActions(['saveTreeID']),
   },
