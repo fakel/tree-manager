@@ -14,7 +14,7 @@ Vue.use(VueRouter);
  * with the Router instance.
  */
 
-export default function (/* { store, ssrContext } */) {
+export default function ({ store }) {
   const Router = new VueRouter({
     scrollBehavior: () => ({ x: 0, y: 0 }),
     routes,
@@ -26,5 +26,19 @@ export default function (/* { store, ssrContext } */) {
     base: process.env.VUE_ROUTER_BASE,
   });
 
+  Router.beforeEach((to, from, next) => {
+    const { userState } = store.state.base;
+    if (to.path !== '/' && userState === null) {
+      next({ path: '/' });
+    } else if (to.path === '/dashboard' && userState === 'offline') {
+      next({ path: '/dashboard/offline' });
+    } else next();
+  });
+  Router.beforeEach((to, from, next) => {
+    const { userState } = store.state.base;
+    if (to.path === '/dashboard/tree' && userState === 'offline') {
+      next({ path: '/dashboard/treeoffline' });
+    } else next();
+  });
   return Router;
 }
