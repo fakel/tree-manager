@@ -7,14 +7,15 @@
 export default {
   name: 'App',
   mounted() {
-  //   this.$idb.getUser()
-  //     .then((res) => {
-  //       console.log(res);
-  //       if (res[0].value.uid) this.$router.push({ path: '/dashboard' });
-  //     });
+    //   this.$idb.getUser()
+    //     .then((res) => {
+    //       console.log(res);
+    //       if (res[0].value.uid) this.$router.push({ path: '/dashboard' });
+    //     });
     this.$auth().onAuthStateChanged((user) => {
+      console.log(window.location.hash);
       if (user) this.$router.push({ path: '/dashboard' });
-      else this.$router.push({ path: '/' });
+      else if (window.location.hash !== '#/') this.$router.push({ path: '/' });
     });
   },
 };
