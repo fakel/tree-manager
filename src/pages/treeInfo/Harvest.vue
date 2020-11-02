@@ -3,29 +3,17 @@
     <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
       <q-input
         filled
-        v-model="name"
-        label="Your name *"
-        hint="Name and surname"
+        v-model="pods"
+        label="Number of Pods *"
         lazy-rules
+        type="number"
         :rules="[(val) => (val && val.length > 0) || 'Please type something']"
       />
 
-      <q-input
-        filled
-        type="number"
-        v-model="age"
-        label="Your age *"
-        lazy-rules
-        :rules="[
-          (val) => (val !== null && val !== '') || 'Please type your age',
-          (val) => (val > 0 && val < 100) || 'Please type a real age',
-        ]"
-      />
-
-      <q-toggle v-model="accept" label="I accept the license and terms" />
+      <q-input filled v-model="comment" label="Comments" lazy-rules />
 
       <div>
-        <q-btn label="Submit" type="submit" color="primary" />
+        <q-btn label="Save" type="submit" color="primary" />
         <q-btn
           label="Reset"
           type="reset"
@@ -39,39 +27,64 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
+const { mapGetters } = createNamespacedHelpers('base');
+
 export default {
   data() {
     return {
-      name: null,
-      age: null,
-
-      accept: false,
+      pods: null,
+      comment: null,
     };
   },
-
+  created() {
+    const id = this.getTreeID;
+    this.$idb.getEntry('treeInfo', id)
+      .then((treeData) => {
+        const harvestData = treeData.harvest
+          ? treeData.harvest.sort((a, b) => (a.timeStamp > b.timeStamp ? -1 : 1))[0]
+          : null;
+        if (harvestData) {
+          this.pods = harvestData.pods;
+          this.comment = harvestData.comment;
+        }
+      });
+  },
+  computed: {
+    ...mapGetters(['getTreeID']),
+  },
   methods: {
     onSubmit() {
-      if (this.accept !== true) {
-        this.$q.notify({
-          color: 'red-5',
-          textColor: 'white',
-          icon: 'warning',
-          message: 'You need to accept the license and terms first',
+      const id = this.getTreeID;
+      this.$idb.getEntry('treeInfo', id)
+        .then((treeData) => {
+          console.log('treeData', treeData);
+          if (!treeData.harvest) {
+            treeData.harvest = [];
+          }
+          treeData.harvest.push({
+            pods: this.pods,
+            comment: this.comment,
+            timestamp: new Date(),
+          });
+          return this.$idb
+            .saveEntry('treeInfo', treeData);
+        })
+        .then(() => {
+          this.$q.notify({
+            color: 'green-4',
+            textColor: 'white',
+            icon: 'cloud_done',
+            message: 'Saved',
+          });
+          setTimeout(() => this.$router.push({ name: 'info' }), 1000);
         });
-      } else {
-        this.$q.notify({
-          color: 'green-4',
-          textColor: 'white',
-          icon: 'cloud_done',
-          message: 'Submitted',
-        });
-      }
     },
 
     onReset() {
-      this.name = null;
-      this.age = null;
-      this.accept = false;
+      this.pods = null;
+      this.comment = null;
     },
   },
 };
