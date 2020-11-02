@@ -6,37 +6,27 @@
           flat
           dense
           round
-          :icon="treeID ? 'menu' : 'eco'"
-          :aria-label="treeID ? 'Menu' : 'Eco'"
+          :icon="getTreeID ? 'menu' : 'eco'"
+          :aria-label="getTreeID ? 'Menu' : 'Eco'"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
-        <q-toolbar-title>
-          Forest Manager
-        </q-toolbar-title>
-        <q-btn
-              @click="logout"
-              round
-              color="red"
-              icon="ion-power"
-          />
+        <q-toolbar-title> Forest Manager </q-toolbar-title>
+        <q-btn @click="logout" round color="red" icon="ion-power" />
       </q-toolbar>
     </q-header>
 
     <q-drawer
-      v-if="treeID"
+      v-if="getTreeID"
       v-model="leftDrawerOpen"
       show-if-above
       bordered
       content-class="bg-grey-1"
       :width="150"
     >
-      <q-list class="column no-wrap items-center justify-center q-pa-md q-gutter-sm">
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          Menu
-        </q-item-label>
+      <q-list
+        class="column no-wrap items-center justify-center q-pa-md q-gutter-sm"
+      >
+        <q-item-label header class="text-grey-8"> Menu </q-item-label>
         <q-btn
           color="secondary"
           style="width: 100px"
@@ -57,42 +47,42 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapState, mapActions } = createNamespacedHelpers('base');
-const linksData = [
+const { mapActions, mapGetters } = createNamespacedHelpers('base');
+const preLinksData = [
+  {
+    title: 'Info',
+    caption: 'Info',
+    link: { name: 'editInfo' },
+  },
   {
     title: 'Harvest',
-    caption: 'quasar.dev',
+    caption: 'Harvest',
     link: { name: 'harvest' },
   },
   {
     title: 'Fruit',
-    caption: 'github.com/quasarframework',
+    caption: 'Fruit',
     link: { name: 'fruit' },
   },
   {
     title: 'Flower',
-    caption: 'chat.quasar.dev',
+    caption: 'Flower',
     link: { name: 'flower' },
   },
   {
     title: 'Prunning',
-    caption: 'forum.quasar.dev',
+    caption: 'Prunning',
     link: { name: 'prunning' },
   },
   {
     title: 'Healt',
-    caption: '@quasarframework',
+    caption: 'Healt',
     link: { name: 'healt' },
   },
   {
     title: 'About',
-    caption: '@QuasarFramework',
+    caption: 'About',
     link: { name: 'about' },
-  },
-  {
-    title: 'Send Data',
-    caption: 'Community Quasar projects',
-    link: { name: 'send' },
   },
 ];
 
@@ -102,13 +92,35 @@ export default {
   data() {
     return {
       leftDrawerOpen: false,
-      menuLinks: linksData,
     };
   },
   computed: {
-    ...mapState({
-      treeID: (state) => state.treeID,
-    }),
+    ...mapGetters(['getTreeID', 'getUserState']),
+    menuLinks() {
+      let newLinks;
+      if (this.getUserState === 'offline') {
+        newLinks = [
+          {
+            title: 'Main',
+            caption: 'Main',
+            link: { name: 'treeoffline' },
+          },
+          ...preLinksData,
+          {
+            title: 'Send Data',
+            caption: 'Send Data',
+            link: { name: 'send' },
+          },
+        ];
+      } else {
+        newLinks = [{
+          title: 'Main',
+          caption: 'Main',
+          link: { name: 'tree' },
+        }, ...preLinksData];
+      }
+      return newLinks;
+    },
   },
   methods: {
     logout() {
