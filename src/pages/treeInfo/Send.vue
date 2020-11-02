@@ -6,12 +6,83 @@
     >
       <q-icon name="cloud_upload" size="150px" />
       <div class="row q-mb-md">
-        <q-btn style="width: 150px" color="primary" label="Sync with Cloud" />
+        <q-btn
+          @click="cloudSync"
+          style="width: 150px"
+          color="primary"
+          label="Sync with Cloud"
+        />
       </div>
     </q-page>
   </q-page-container>
 </template>
 
 <script>
-export default {};
+
+function toUnique(data) {
+  return data.filter((v, idx, arr) => {
+    if (idx === 0) return true;
+    for (let i = 0; i < idx; i += 1) {
+      if (v.id === arr[i].id) {
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+export default {
+  methods: {
+    cloudSync() {
+      // Get all offline entries
+      this.$idb
+        .getAllEntries('treeInfo')
+        .then((treesData) => {
+          // For each entry
+          treesData.forEach((treeInfo) => {
+            console.log(treeInfo);
+            // First the id
+            const docID = treeInfo.id;
+            console.log(docID);
+            // Firebase Batch
+            const batch = this.$db.batch();
+            const ledger = this.$db.collection('ledger');
+            const treeInfoCol = this.$db.collection('treeInfo');
+            // Try get current document
+            treeInfoCol.doc(docID).get()
+              .then((current) => {
+                const currentState = current.data() ? current.data() : {};
+                const dataTypes = ['info', 'harvest', 'fruit', 'flower', 'prunning', 'healt'];
+                // For each data type
+                dataTypes.forEach((type) => {
+                  // Check if there is anything to upload
+                  if (treeInfo[type]) {
+                    // Create each reference with name "type+id+timeInMilis"
+                    const typeRefs = treeInfo[type].map((reg) => {
+                      const ref = ledger.doc(`${type + docID + reg.timestamp.getTime()}`);
+                      batch.set(ref, reg);
+                      return ref;
+                    });
+                    // Concatenate with current values or create new
+                    if (currentState[type]) {
+                      currentState[type] = ([...typeRefs, ...currentState[type]]);
+                    } else {
+                      currentState[type] = typeRefs;
+                    }
+                    // Sanitize, unique refs and olders first
+                    currentState[type] = toUnique(currentState[type]).sort().reverse();
+                  }
+                });
+                // update treeInfo collection
+                if (!currentState.id) currentState.id = docID;
+                batch.set(treeInfoCol.doc(docID), currentState);
+                // Commit changes
+                batch.commit().then(console.log('updated'));
+              });
+          });
+        })
+        .catch((e) => console.log(e));
+    },
+  },
+};
 </script>
