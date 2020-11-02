@@ -27,12 +27,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input
-              dense
-              v-model="treeID"
-              autofocus
-              @keyup.enter="setTree"
-            />
+            <q-input dense v-model="treeID" autofocus @keyup.enter="setTree" />
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary">
@@ -62,8 +57,11 @@ export default {
   methods: {
     setTree() {
       if (this.treeID !== '') {
-        this.saveTreeID({ treeID: this.treeID });
-        this.$router.push({ name: 'treeoffline' });
+        this.$idb.db.treeInfo.get({ id: this.treeID }).then((res) => {
+          if (!res) this.$idb.db.treeInfo.add({ id: this.treeID });
+          this.saveTreeID({ treeID: this.treeID });
+          this.$router.push({ name: 'treeoffline' });
+        });
       }
       this.prompt = false;
     },
