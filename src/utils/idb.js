@@ -25,21 +25,12 @@ export default {
   },
   getAllEntries(objStore) {
     return new Promise((resolve) => {
-      const trans = db.transaction([objStore], 'readonly');
       const entries = [];
-
-      trans.oncomplete = () => {
-        resolve(entries);
-      };
-
-      const store = trans.objectStore(objStore);
-
-      store.openCursor().onsuccess = (e) => {
-        const entry = e.target.result;
-        if (entry) {
-          entries.push(entry.value);
-        }
-      };
+      db[objStore]
+        .each((treeInfo) => entries.push(treeInfo))
+        .then(() => {
+          resolve(entries);
+        });
     });
   },
   saveEntry(objStore, entry) {
