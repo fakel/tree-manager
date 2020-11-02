@@ -1,38 +1,14 @@
-const DB_NAME = 'pendignUpload';
-const DB_VERSION = 1;
-let DB;
+import Dexie from 'dexie';
+
+const db = new Dexie('pendingUpload');
+
+db.version(1).stores({
+  treeInfo: 'id',
+});
 
 export default {
-  async getDb(objStore) {
-    // eslint-disable-next-line consistent-return
-    return new Promise((resolve, reject) => {
-      if (DB) {
-        return resolve(DB);
-      }
-      const request = window.indexedDB.open(DB_NAME, DB_VERSION);
-
-      request.onerror = (e) => {
-        reject(`Error ${e}`);
-      };
-
-      request.onsuccess = (e) => {
-        DB = e.target.result;
-        resolve(DB);
-      };
-
-      request.onupgradeneeded = (e) => {
-        console.log('onupgradeneeded');
-        const db = e.target.result;
-        db.createObjectStore(objStore, {
-          autoIncrement: false,
-          keyPath: 'id',
-        });
-      };
-    });
-  },
-  async deleteEntry(objStore, id) {
-    const db = await this.getDb(objStore);
-
+  db,
+  deleteEntry(objStore, id) {
     return new Promise((resolve) => {
       const trans = db.transaction([objStore], 'readwrite');
       trans.oncomplete = () => {
@@ -43,27 +19,11 @@ export default {
       store.delete('0');
     });
   },
-  async getEntry(objStore, id) {
-    const db = await this.getDb(objStore);
-
-    return new Promise((resolve) => {
-      const trans = db.transaction([objStore], 'readonly');
-      let entry;
-
-      trans.oncomplete = () => {
-        resolve(entry);
-      };
-
-      const store = trans.objectStore(objStore);
-
-      store.get(id).onsuccess = (e) => {
-        entry = e.target.result.value;
-      };
-    });
+  getEntry(objStore, id) {
+    // console.log(objStore, id);
+    return db[objStore].get(id);
   },
-  async getAllEntries(objStore) {
-    const db = await this.getDb(objStore);
-
+  getAllEntries(objStore) {
     return new Promise((resolve) => {
       const trans = db.transaction([objStore], 'readonly');
       const entries = [];
@@ -82,16 +42,7 @@ export default {
       };
     });
   },
-  async saveEntry(objStore, entry) {
-    const db = await this.getDb(objStore);
-
-    return new Promise((resolve) => {
-      const trans = db.transaction([objStore], 'readwrite');
-      trans.oncomplete = () => {
-        resolve();
-      };
-      const store = trans.objectStore(objStore);
-      store.put(entry);
-    });
+  saveEntry(objStore, entry) {
+    return db[objStore].update(entry.id, entry).then(() => db[objStore].get(entry.id));
   },
 };
