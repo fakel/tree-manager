@@ -107,7 +107,7 @@ export default {
       this.$router.push({ path: '/dashboard/offline' });
     },
     signWithEmailAndPassword() {
-      this.$auth()
+      this.$auth
         .signInWithEmailAndPassword(this.email, this.password)
         .then(() => {
           this.$store.dispatch('base/saveUserState', { userState: 'online' });
@@ -128,7 +128,7 @@ export default {
     signWithGoogle() {
       console.log('Google');
       const provider = new this.$firebase.auth.GoogleAuthProvider();
-      this.$auth()
+      this.$auth
         .signInWithPopup(provider)
         .then(() => {
           this.$store.dispatch('base/saveUserState', { userState: 'online' });

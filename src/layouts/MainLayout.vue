@@ -127,7 +127,7 @@ export default {
       if (this.$store.state.userState === 'offline') {
         this.saveUserState({ userState: null });
       } else {
-        this.$auth().signOut();
+        this.$auth.signOut();
         this.$router.push({ path: '/' });
       }
     },
