@@ -29,9 +29,39 @@ const routes = [
             component: () => import('pages/treeInfo/Info.vue'),
           },
           {
+            name: 'editInfo',
+            path: 'editInfo',
+            component: () => import('pages/treeInfo/EditInfo.vue'),
+          },
+          {
             name: 'harvest',
             path: 'harvest',
             component: () => import('pages/treeInfo/Harvest.vue'),
+          },
+          {
+            name: 'flower',
+            path: 'flower',
+            component: () => import('pages/treeInfo/Flower.vue'),
+          },
+          {
+            name: 'fruit',
+            path: 'fruit',
+            component: () => import('pages/treeInfo/Fruit.vue'),
+          },
+          {
+            name: 'prunning',
+            path: 'prunning',
+            component: () => import('pages/treeInfo/Prunning.vue'),
+          },
+          {
+            name: 'healt',
+            path: 'healt',
+            component: () => import('pages/treeInfo/Healt.vue'),
+          },
+          {
+            name: 'send',
+            path: 'send',
+            component: () => import('pages/treeInfo/Send.vue'),
           },
         ],
       },
