@@ -59,7 +59,6 @@ export default {
       const id = this.getTreeID;
       this.$idb.getEntry('treeInfo', id)
         .then((treeData) => {
-          console.log('treeData', treeData);
           if (!treeData.harvest) {
             treeData.harvest = [];
           }
