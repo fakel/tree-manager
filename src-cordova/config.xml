@@ -21,4 +21,12 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <allow-navigation href="about:*" />
+    <universal-links>
+        <host name="treemanager.page.link" scheme="https" />
+        <host name="patanemo-tree-manager.firebaseapp.com" scheme="https">
+            <path url="/__/auth/callback" />
+        </host>
+    </universal-links>
+    <preference name="AndroidLaunchMode" value="singleTask" />
+    <preference name="android-minSdkVersion" value="22" />
 </widget>

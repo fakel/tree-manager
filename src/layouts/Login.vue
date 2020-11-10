@@ -120,16 +120,14 @@ export default {
       // });
     },
     signWithFacebook() {
-      console.log('Facebook');
     },
     signWithTwitter() {
-      console.log('Twitter');
     },
     signWithGoogle() {
-      console.log('Google');
       const provider = new this.$firebase.auth.GoogleAuthProvider();
       this.$auth
-        .signInWithPopup(provider)
+        .signInWithRedirect(provider)
+        .then(() => this.$auth.getRedirectResult())
         .then(() => {
           this.$store.dispatch('base/saveUserState', { userState: 'online' });
         });
