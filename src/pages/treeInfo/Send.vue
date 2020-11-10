@@ -40,10 +40,8 @@ export default {
         .then((treesData) => {
           // For each entry
           treesData.forEach((treeInfo) => {
-            console.log(treeInfo);
             // First the id
             const docID = treeInfo.id;
-            console.log(docID);
             // Firebase Batch
             const batch = this.$db.batch();
             const ledger = this.$db.collection('ledger');
@@ -59,8 +57,10 @@ export default {
                   if (treeInfo[type]) {
                     // Create each reference with name "type+id+timeInMilis"
                     const typeRefs = treeInfo[type].map((reg) => {
+                      const regToUpdate = reg;
+                      if (!regToUpdate.author) regToUpdate.author = this.$auth.currentUser.uid;
                       const ref = ledger.doc(`${type + docID + reg.timestamp.getTime()}`);
-                      batch.set(ref, reg);
+                      batch.set(ref, regToUpdate);
                       return ref;
                     });
                     // Concatenate with current values or create new
@@ -77,11 +77,11 @@ export default {
                 if (!currentState.id) currentState.id = docID;
                 batch.set(treeInfoCol.doc(docID), currentState);
                 // Commit changes
-                batch.commit().then(console.log('updated'));
+                batch.commit();
               });
           });
-        })
-        .catch((e) => console.log(e));
+        });
+      // .catch((e) => console.log(e));
     },
   },
 };
