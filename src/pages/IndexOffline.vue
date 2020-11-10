@@ -13,13 +13,13 @@
           label="Write Tag"
         />
       </div>
-      <div class="row q-mb-md">
+      <!-- <div class="row q-mb-md">
         <q-icon name="description" size="xl" class="q-mr-sm" />
         <q-btn style="width: 150px" color="primary" label="Read Tag" />
       </div>
-      <p class="row q-mb-none">Or</p>
+      <p class="row q-mb-none">Or</p> -->
       <q-icon name="qr_code_scanner" size="150px" />
-      <p>Scan Code</p>
+      <p>Scan Code (soon)</p>
       <q-dialog v-model="prompt" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
