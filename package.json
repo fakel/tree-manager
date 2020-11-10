@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "android": "quasar dev -m cordova -T android",
+    "buildAndroid": "quasar build -m android",
     "serve": "quasar dev",
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0"
