@@ -106,18 +106,18 @@ export default {
             link: { name: 'treeoffline' },
           },
           ...preLinksData,
-          {
-            title: 'Send Data',
-            caption: 'Send Data',
-            link: { name: 'send' },
-          },
         ];
       } else {
         newLinks = [{
           title: 'Main',
           caption: 'Main',
-          link: { name: 'tree' },
-        }, ...preLinksData];
+          link: { name: 'home' },
+        }, ...preLinksData,
+        {
+          title: 'Send Data',
+          caption: 'Send Data',
+          link: { name: 'send' },
+        }];
       }
       return newLinks;
     },
