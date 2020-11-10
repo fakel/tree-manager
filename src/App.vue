@@ -13,9 +13,13 @@ export default {
     //       if (res[0].value.uid) this.$router.push({ path: '/dashboard' });
     //     });
     this.$auth.onAuthStateChanged((user) => {
-      console.log(window.location.hash);
-      if (user) this.$router.push({ path: '/dashboard' });
-      else if (window.location.hash !== '#/') this.$router.push({ path: '/' });
+      if (user) {
+        this.$store.dispatch('base/saveUserState', { userState: 'online' });
+        this.$router.push({ name: 'online' });
+      } else if (window.location.hash !== '#/') {
+        this.$store.dispatch('base/saveUserState', { userState: null });
+        this.$router.push({ name: 'login' });
+      }
     });
   },
 };
