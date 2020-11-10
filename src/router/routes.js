@@ -1,16 +1,18 @@
 const routes = [
   {
+    name: 'login',
     path: '/',
     component: () => import('layouts/Login.vue'),
   },
   {
+    name: 'dashboard',
     path: '/dashboard',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
-        name: 'home',
+        name: 'online',
         path: '',
-        component: () => import('pages/Index.vue'),
+        component: () => import('pages/treeInfo/Send.vue'),
       },
       {
         name: 'offline',
@@ -57,11 +59,6 @@ const routes = [
             name: 'healt',
             path: 'healt',
             component: () => import('pages/treeInfo/Healt.vue'),
-          },
-          {
-            name: 'send',
-            path: 'send',
-            component: () => import('pages/treeInfo/Send.vue'),
           },
         ],
       },
